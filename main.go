@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/bwmarrin/discordgo"
-	""
 	"os/signal"
 	"syscall"
 	"strings"
