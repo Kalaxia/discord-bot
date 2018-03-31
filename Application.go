@@ -82,19 +82,27 @@ func (app *Application) NewPollActionWrapper(writer http.ResponseWriter, request
 func (app *Application) DiscordMessageHandler(session *discordgo.Session, message *discordgo.MessageCreate) {
 	// Check if message starts with "!tarvernier"
 	if strings.HasPrefix(message.Content, "!tavernier") {
-		// Split after one space
-		drink := strings.SplitAfterN(message.Content, " ", 2)[1]
-		if message.Author.ID == "321282244431970306" {
-			drink = "de la souillure de chaussette"
-		}
-		
-		// Build response
 		var response bytes.Buffer
-		response.WriteString("*donne ")
-		response.WriteString(drink)
-		response.WriteString(" à <@")
-		response.WriteString(message.Author.ID)
-		response.WriteString(">*")
+
+		// Split after one space
+		parsedMessage := strings.SplitAfterN(message.Content, " ", 2)
+		if len(parsedMessage) <= 1 {
+			response.WriteString("*donne une chope vide à <@")
+			response.WriteString(message.Author.ID)
+			response.WriteString(">*")
+		} else {
+			drink := parsedMessage[1]
+
+			if message.Author.ID == "321282244431970306" {
+				drink = "de la souillure de chaussette"
+			}
+			
+			response.WriteString("*donne ")
+			response.WriteString(drink)
+			response.WriteString(" à <@")
+			response.WriteString(message.Author.ID)
+			response.WriteString(">*")
+		}
 
 		// Send response
 		session.ChannelMessageSend(message.ChannelID, response.String())
