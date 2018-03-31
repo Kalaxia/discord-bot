@@ -17,7 +17,7 @@ func NewPollAction(session *discordgo.Session, pollChannel string, writer http.R
 	}
 
 	// Build response
-	pollUrl := "https://kalaxia.com/polls/" + payload["id"]
+	pollUrl := "https://www.kalaxia.com/polls/" + payload["id"]
 
 	var response bytes.Buffer
 	response.WriteString("@everyone\n**Un nouveau vote à été soumis ! Allez voter sur ")

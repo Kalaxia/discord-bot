@@ -68,7 +68,8 @@ func (app *Application) Run() {
 	log.Fatal(http.ListenAndServe(app.Config.Http.Address, app.Router))
 }
 
-/*  Define wrappers to avoid global discord session (global is ugly lulz)
+/*  
+ * Define wrappers to avoid global discord session (global is ugly lulz)
  * **********************************************************************
  */
 
@@ -96,7 +97,7 @@ func (app *Application) DiscordMessageHandler(session *discordgo.Session, messag
 			if message.Author.ID == "321282244431970306" {
 				drink = "de la souillure de chaussette"
 			}
-			
+
 			response.WriteString("*donne ")
 			response.WriteString(drink)
 			response.WriteString(" à <@")
