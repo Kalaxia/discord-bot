@@ -18,9 +18,18 @@ type Application struct {
 	Config 		ApplicationConfig
 }
 
-type ApplicationConfig struct {
+type HttpConfig struct {
+	Address		string 				`yaml:"address"`
+}
+
+type BotConfig struct {
 	Token		string 				`yaml:"token"`
 	Channels 	map[string]string 	`yaml:"channels"`
+}
+
+type ApplicationConfig struct {
+	Bot 		BotConfig 			`yaml:"bot"`
+	Http 		HttpConfig 			`yaml:"http"`
 }
 
 // Configure bot & router
@@ -37,7 +46,7 @@ func (app *Application) Initialize(configFilePath string) {
 	}
 
 	// Initialize discord bot
-	app.Session, err = discordgo.New("Bot " + app.Config.Token)
+	app.Session, err = discordgo.New("Bot " + app.Config.Bot.Token)
 	if err != nil {
 		log.Fatal("failed to create discord session")
 	}
@@ -56,7 +65,7 @@ func (app *Application) Initialize(configFilePath string) {
 // Run http server
 func (app *Application) Run() {
 	log.Println("http server is running")
-	log.Fatal(http.ListenAndServe(":8080", app.Router))
+	log.Fatal(http.ListenAndServe(app.Config.Http.Address, app.Router))
 }
 
 /*  Define wrappers to avoid global discord session (global is ugly lulz)
@@ -64,7 +73,7 @@ func (app *Application) Run() {
  */
 
 func (app *Application) NewPollActionWrapper(writer http.ResponseWriter, request *http.Request) {
-	controllers.NewPollAction(app.Session, app.Config.Channels["announcements"], writer, request)
+	controllers.NewPollAction(app.Session, app.Config.Bot.Channels["announcements"], writer, request)
 }
 
 /*

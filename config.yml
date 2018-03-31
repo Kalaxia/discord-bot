@@ -1,4 +1,7 @@
+bot:
+  token:
+  channels: 
+    announcements:
 
-token: 
-channels:
-    announcements: 
+http:
+  address:
