@@ -4,7 +4,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/go-yaml/yaml"
 	"github.com/gorilla/mux"
-	"./Controllers"
+	"discord-bot/controller"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -35,7 +35,7 @@ type ApplicationConfig struct {
 // Configure bot & router
 func (app *Application) Initialize(configFilePath string) {
 	var err error
-	
+
 	// Parse config
 	rawConfig, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
@@ -96,7 +96,7 @@ func (app *Application) DiscordMessageHandler(session *discordgo.Session, messag
 			if message.Author.ID == "321282244431970306" {
 				drink = "de la souillure de chaussette"
 			}
-			
+
 			response.WriteString("*donne ")
 			response.WriteString(drink)
 			response.WriteString(" à <@")

@@ -1,10 +1,10 @@
-package controllers
+package controller
 
 import (
 	"github.com/bwmarrin/discordgo"
 	"encoding/json"
 	"net/http"
-	"../Utils"
+	"discord-bot/utils"
 	"bytes"
 )
 
