@@ -1,2 +1,5 @@
 bin/*
 discord-bot/*
+discord-bot
+build.sh
+
