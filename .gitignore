@@ -1,3 +1,5 @@
 bin/*
 discord-bot/*
-kalaxia-bot
+discord-bot
+build.sh
+
