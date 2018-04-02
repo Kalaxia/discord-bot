@@ -14,6 +14,7 @@ func NewPollAction(session *discordgo.Session, pollChannel string, writer http.R
 	decoder := json.NewDecoder(request.Body)
 	if err := decoder.Decode(&payload); err != nil {
 		utils.BuildJsonResponse("error", writer)
+		return
 	}
 
 	// Build response

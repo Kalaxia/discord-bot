@@ -2,10 +2,9 @@ package main
 
 import (
 	"github.com/bwmarrin/discordgo"
-	"github.com/go-yaml/yaml"
 	"github.com/gorilla/mux"
 	"discord-bot/controller"
-	"io/ioutil"
+	"os"
 	"net/http"
 	"strings"
 	"bytes"
@@ -23,27 +22,22 @@ type HttpConfig struct {
 }
 
 type BotConfig struct {
-	Token		string 				`yaml:"token"`
-	Channels 	map[string]string 	`yaml:"channels"`
+	Token		string
+	Channels 	map[string]string
 }
 
 type ApplicationConfig struct {
-	Bot 		BotConfig 			`yaml:"bot"`
-	Http 		HttpConfig 			`yaml:"http"`
+	Bot 		BotConfig
+	Http 		HttpConfig
 }
 
 // Configure bot & router
-func (app *Application) Initialize(configFilePath string) {
+func (app *Application) Initialize() {
 	var err error
 
-	// Parse config
-	rawConfig, err := ioutil.ReadFile(configFilePath)
-	if err != nil {
-		log.Fatal("failed to load config file")
-	}
-	if err := yaml.Unmarshal([]byte(rawConfig), &app.Config); err != nil {
-		log.Fatal("failed to parse config file")
-	}
+	app.Config.Bot.Token = os.Getenv("DISCORD_SERVER_TOKEN")
+	app.Config.Bot.Channels = make(map[string]string, 0)
+	app.Config.Bot.Channels["announcements"] = os.Getenv("DISCORD_ANNOUNCEMENTS_CHANNEL")
 
 	// Initialize discord bot
 	app.Session, err = discordgo.New("Bot " + app.Config.Bot.Token)
@@ -73,7 +67,7 @@ func (app *Application) Run() {
  */
 
 func (app *Application) NewPollActionWrapper(writer http.ResponseWriter, request *http.Request) {
-	controllers.NewPollAction(app.Session, app.Config.Bot.Channels["announcements"], writer, request)
+	controller.NewPollAction(app.Session, app.Config.Bot.Channels["announcements"], writer, request)
 }
 
 /*
