@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"discord-bot/utils"
 	"bytes"
+	"log"
 )
 
 func NewPollAction(session *discordgo.Session, pollChannel string, writer http.ResponseWriter, request *http.Request) {
