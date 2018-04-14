@@ -2,42 +2,33 @@ package controller
 
 import (
 	"github.com/bwmarrin/discordgo"
-	"encoding/json"
 	"net/http"
 	"discord-bot/utils"
 	"strconv"
-	"bytes"
 	"log"
 )
 
-func NewPollAction(session *discordgo.Session, pollChannel string, writer http.ResponseWriter, request *http.Request) {
-	var payload map[string]interface{}
-
-	decoder := json.NewDecoder(request.Body)
-	if err := decoder.Decode(&payload); err != nil {
+func PollAddAction(session *discordgo.Session, pollChannel string, writer http.ResponseWriter, request *http.Request) {
+	/* payload, err := utils.ParseJsonRequest(request) */
+	var payload map[string]int
+	if err := utils.ParseJsonRequest(request, &payload); err != nil {
 		log.Println(err)
 		utils.BuildJsonResponse("error", "payload decoding error", writer)
 		return
 	}
 
-	if !utils.CheckKey(payload, "id") {
+	if _, ok := payload["id"]; !ok {
 		utils.BuildJsonResponse("error", "invalid payload", writer)
 		return
 	}
-
-	// Convert parameters
-	pollId := strconv.FormatFloat(payload["id"].(float64), 'f', 0, 64)
-
 	// Build response
-	pollUrl := "https://www.kalaxia.com/polls/" + pollId
+	pollUrl := "https://www.kalaxia.com/polls/" + string(payload["id"])
 
-	var response bytes.Buffer
-	response.WriteString("@everyone\n**Un nouveau vote à été soumis ! Allez voter sur ")
-	response.WriteString(pollUrl)
-	response.WriteString(" :D**")
+	var response string
+	response = "@everyone\n**Un nouveau vote à été soumis ! Allez voter sur " + pollUrl + " :D**"
 
 	// Send discord message
-	_, err := session.ChannelMessageSend(pollChannel, response.String())
+	_, err := session.ChannelMessageSend(pollChannel, response)
 	if err != nil {
 		log.Println(err)
 		utils.BuildJsonResponse("error", "discord send message error", writer)

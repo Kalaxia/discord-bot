@@ -38,7 +38,8 @@ func (app *Application) Initialize() {
 	app.Config.Bot.Token = os.Getenv("DISCORD_SERVER_TOKEN")
 	app.Config.Bot.Channels = make(map[string]string, 0)
 	app.Config.Bot.Channels["announcements"] = os.Getenv("DISCORD_ANNOUNCEMENTS_CHANNEL")
-
+	app.Config.Bot.Channels["board"] = os.Getenv("DISCORD_BOARD_CHANNEL")
+	
 	// Initialize discord bot
 	app.Session, err = discordgo.New("Bot " + app.Config.Bot.Token)
 	if err != nil {
@@ -53,7 +54,11 @@ func (app *Application) Initialize() {
 
 	// Initialize http router
 	app.Router = mux.NewRouter()
-	app.Router.HandleFunc("/polls/new", app.NewPollActionWrapper).Methods("POST")
+	app.Router.HandleFunc("/polls/new", app.PollAddActionWrapper).Methods("POST")
+	
+	app.Router.HandleFunc("/tickets/new", app.TicketAddActionWrapper).Methods("POST")
+	app.Router.HandleFunc("/tickets/update", app.TicketUpdateActionWrapper).Methods("POST")
+	app.Router.HandleFunc("/tickets/delete", app.TicketRemoveActionWrapper).Methods("POST")
 }
 
 // Run http server
@@ -67,8 +72,20 @@ func (app *Application) Run() {
  * **********************************************************************
  */
 
-func (app *Application) NewPollActionWrapper(writer http.ResponseWriter, request *http.Request) {
-	controller.NewPollAction(app.Session, app.Config.Bot.Channels["announcements"], writer, request)
+func (app *Application) PollAddActionWrapper(writer http.ResponseWriter, request *http.Request) {
+	controller.PollAddAction(app.Session, app.Config.Bot.Channels["announcements"], writer, request)
+}
+
+func (app *Application) TicketAddActionWrapper(writer http.ResponseWriter, request *http.Request) {
+	controller.TicketAddAction(app.Session, app.Config.Bot.Channels["board"], writer, request)
+}
+
+func (app *Application) TicketUpdateActionWrapper(writer http.ResponseWriter, request *http.Request) {
+	controller.TicketUpdateAction(app.Session, app.Config.Bot.Channels["board"], writer, request)
+}
+
+func (app *Application) TicketRemoveActionWrapper(writer http.ResponseWriter, request *http.Request) {
+	controller.TicketRemoveAction(app.Session, app.Config.Bot.Channels["board"], writer, request)
 }
 
 /*
