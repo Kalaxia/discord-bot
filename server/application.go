@@ -1,15 +1,16 @@
-package main
+package server
 
 import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/gorilla/mux"
-	"discord-bot/controller"
 	"os"
 	"net/http"
 	"strings"
 	"bytes"
 	"log"
 )
+
+var App Application
 
 type Application struct {
 	Router		*mux.Router
@@ -36,29 +37,19 @@ func (app *Application) Initialize() {
 	var err error
 
 	app.Config.Bot.Token = os.Getenv("DISCORD_SERVER_TOKEN")
-	app.Config.Bot.Channels = make(map[string]string, 0)
-	app.Config.Bot.Channels["announcements"] = os.Getenv("DISCORD_ANNOUNCEMENTS_CHANNEL")
-	app.Config.Bot.Channels["board"] = os.Getenv("DISCORD_BOARD_CHANNEL")
-	
-	// Initialize discord bot
+	app.Config.Bot.Channels = map[string]string{
+		"announcements": os.Getenv("DISCORD_ANNOUNCEMENTS_CHANNEL"),
+		"board": os.Getenv("DISCORD_BOARD_CHANNEL"),
+	}
 	app.Session, err = discordgo.New("Bot " + app.Config.Bot.Token)
 	if err != nil {
 		log.Fatal("failed to create discord session")
 	}
-	err = app.Session.Open()
-	if err != nil {
+	if err = app.Session.Open(); err != nil {
 		log.Fatal("failed to open discord session")
 	}
 	log.Println("discord bot is running")
 	app.Session.AddHandler(app.DiscordMessageHandler)
-
-	// Initialize http router
-	app.Router = mux.NewRouter()
-	app.Router.HandleFunc("/polls/new", app.PollAddActionWrapper).Methods("POST")
-	
-	app.Router.HandleFunc("/tickets/new", app.TicketAddActionWrapper).Methods("POST")
-	app.Router.HandleFunc("/tickets/update", app.TicketUpdateActionWrapper).Methods("POST")
-	app.Router.HandleFunc("/tickets/delete", app.TicketRemoveActionWrapper).Methods("POST")
 }
 
 // Run http server
@@ -66,28 +57,6 @@ func (app *Application) Run() {
 	log.Println("http server is running")
 	log.Fatal(http.ListenAndServe(app.Config.Http.Address, app.Router))
 }
-
-/*  
- * Define wrappers to avoid global discord session (global is ugly lulz)
- * **********************************************************************
- */
-
-func (app *Application) PollAddActionWrapper(writer http.ResponseWriter, request *http.Request) {
-	controller.PollAddAction(app.Session, app.Config.Bot.Channels["announcements"], writer, request)
-}
-
-func (app *Application) TicketAddActionWrapper(writer http.ResponseWriter, request *http.Request) {
-	controller.TicketAddAction(app.Session, app.Config.Bot.Channels["board"], writer, request)
-}
-
-func (app *Application) TicketUpdateActionWrapper(writer http.ResponseWriter, request *http.Request) {
-	controller.TicketUpdateAction(app.Session, app.Config.Bot.Channels["board"], writer, request)
-}
-
-func (app *Application) TicketRemoveActionWrapper(writer http.ResponseWriter, request *http.Request) {
-	controller.TicketRemoveAction(app.Session, app.Config.Bot.Channels["board"], writer, request)
-}
-
 /*
  * Define discord bot handlers
  */
@@ -115,8 +84,6 @@ func (app *Application) DiscordMessageHandler(session *discordgo.Session, messag
 			response.WriteString(message.Author.ID)
 			response.WriteString(">*")
 		}
-
-		// Send response
 		session.ChannelMessageSend(message.ChannelID, response.String())
 	}
 }
