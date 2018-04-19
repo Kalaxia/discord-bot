@@ -14,8 +14,8 @@ func main() {
 
 func InitializeRouter() {
 	server.App.Router = mux.NewRouter()
-	server.App.Router.HandleFunc("/polls/new", controller.AddPollAction).Methods("POST")
-	server.App.Router.HandleFunc("/tickets/new", controller.AddTicketAction).Methods("POST")
-	server.App.Router.HandleFunc("/tickets/update", controller.UpdateTicketAction).Methods("POST")
-	server.App.Router.HandleFunc("/tickets/delete", controller.RemoveTicketAction).Methods("POST")
+	server.App.Router.HandleFunc("/polls", controller.AddPollAction).Methods("POST")
+	server.App.Router.HandleFunc("/tickets", controller.AddTicketAction).Methods("POST")
+	server.App.Router.HandleFunc("/tickets", controller.UpdateTicketAction).Methods("PUT")
+	server.App.Router.HandleFunc("/tickets", controller.RemoveTicketAction).Methods("DELETE")
 }

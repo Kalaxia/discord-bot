@@ -2,30 +2,22 @@ package controller
 
 import (
 	"net/http"
+	"discord-bot/exception"
 	"discord-bot/server"
 	"discord-bot/utils"
-	"log"
+	"strconv"
 )
 
 func AddPollAction(writer http.ResponseWriter, request *http.Request) {
-	var payload map[string]int
-	if err := utils.ParseJsonRequest(request, &payload); err != nil {
-		log.Println(err)
-		utils.BuildJsonResponse("error", "payload decoding error", writer)
-		return
-	}
+	defer utils.CatchException(writer)
+	payload := utils.ParseJsonRequest(request)
 	if _, ok := payload["id"]; !ok {
-		utils.BuildJsonResponse("error", "invalid payload", writer)
-		return
+		panic(exception.New(400, "Poll ID is missing", nil))
 	}
-	if _, err := server.App.Session.ChannelMessageSend(
-		server.App.Config.Bot.Channels["board"],
-		`@everyone\n**Un nouveau vote à été soumis !
-		Allez voter sur https://www.kalaxia.com/polls/` + string(payload["id"]) + ` :D**`,
-	); err != nil {
-		log.Println(err)
-		utils.BuildJsonResponse("error", "discord send message error", writer)
-		return
-	}
-	utils.BuildJsonResponse("ok", "notification sent", writer)
+	server.SendDiscordMessage(
+		"board",
+		"@everyone **Un nouveau vote à été soumis ! Allez voter sur https://www.kalaxia.com/polls/" +
+		strconv.FormatInt(int64(payload["id"].(float64)), 10) + "** :envelope_with_arrow:",
+	);
+	utils.SendResponse(writer, 204, "")
 }

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"discord-bot/exception"
 	"github.com/bwmarrin/discordgo"
 	"github.com/gorilla/mux"
 	"os"
@@ -43,10 +44,10 @@ func (app *Application) Initialize() {
 	}
 	app.Session, err = discordgo.New("Bot " + app.Config.Bot.Token)
 	if err != nil {
-		log.Fatal("failed to create discord session")
+		panic(exception.New(500, "Discord session could not be created", err))
 	}
 	if err = app.Session.Open(); err != nil {
-		log.Fatal("failed to open discord session")
+		panic(exception.New(500, "Discord session could not be opened", err))
 	}
 	log.Println("discord bot is running")
 	app.Session.AddHandler(app.DiscordMessageHandler)
@@ -85,5 +86,14 @@ func (app *Application) DiscordMessageHandler(session *discordgo.Session, messag
 			response.WriteString(">*")
 		}
 		session.ChannelMessageSend(message.ChannelID, response.String())
+	}
+}
+
+func SendDiscordMessage(channel, message string) {
+	if _, err := App.Session.ChannelMessageSend(
+		App.Config.Bot.Channels[channel],
+		message,
+	); err != nil {
+		panic(exception.New(500, "Message could not be sent to Discord", err))
 	}
 }
