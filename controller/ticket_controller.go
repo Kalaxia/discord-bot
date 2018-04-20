@@ -43,8 +43,7 @@ func RemoveTicketAction(writer http.ResponseWriter, request *http.Request) {
 	}
 	server.SendDiscordMessage(
 		"board",
-		"La carte **" + payload["title"].(string) + "** (statut: **" + payload["status"].(string) + "**) à été supprimée !" +
-		"https://www.kalaxia.com/feedbacks/" + payload["slug"].(string) + " :wastebasket:",
+		"La carte **" + payload["title"].(string) + "** (statut: **" + payload["status"].(string) + "**) à été supprimée ! :wastebasket:",
 	)
 	utils.SendResponse(writer, 204, "")
 }
