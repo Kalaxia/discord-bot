@@ -17,7 +17,7 @@ func AddPollAction(writer http.ResponseWriter, request *http.Request) {
 	server.SendDiscordMessage(
 		"board",
 		"@everyone **Un nouveau vote à été soumis ! Allez voter sur https://www.kalaxia.com/polls/" +
-		strconv.FormatInt(int64(payload["id"].(float64)), 10) + "** :envelope_with_arrow:",
+		strconv.FormatInt(int64(payload["id"].(float64)), 10) + " ** :envelope_with_arrow:",
 	);
 	utils.SendResponse(writer, 204, "")
 }

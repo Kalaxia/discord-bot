@@ -16,7 +16,7 @@ func AddTicketAction(writer http.ResponseWriter, request *http.Request) {
 	server.SendDiscordMessage(
 		"board",
 		"La carte **" + payload["title"].(string) + "** à été publiée (statut: **" + payload["status"].(string) + "**) ! " +
-		"(https://www.kalaxia.com/feedbacks/" + payload["slug"].(string) + ") :rocket:",
+		"https://www.kalaxia.com/feedbacks/" + payload["slug"].(string) + " :rocket:",
 	)
 	utils.SendResponse(writer, 204, "")
 }
@@ -30,7 +30,7 @@ func UpdateTicketAction(writer http.ResponseWriter, request *http.Request) {
 	server.SendDiscordMessage(
 		"board",
 		"La carte **" + payload["title"].(string) + "** est passée de **" + payload["old_status"].(string) + "** à **" + payload["new_status"].(string) + "**" +
-		" (https://www.kalaxia.com/feedbacks/" + payload["slug"].(string) + ") :rocket:",
+		" https://www.kalaxia.com/feedbacks/" + payload["slug"].(string) + " :rocket:",
 	)
 	utils.SendResponse(writer, 204, "")
 }
@@ -44,7 +44,7 @@ func RemoveTicketAction(writer http.ResponseWriter, request *http.Request) {
 	server.SendDiscordMessage(
 		"board",
 		"La carte **" + payload["title"].(string) + "** (statut: **" + payload["status"].(string) + "**) à été supprimée !" +
-		"(https://www.kalaxia.com/feedbacks/" + payload["slug"].(string) + ") :wastebasket:",
+		"https://www.kalaxia.com/feedbacks/" + payload["slug"].(string) + " :wastebasket:",
 	)
 	utils.SendResponse(writer, 204, "")
 }
