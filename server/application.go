@@ -75,7 +75,7 @@ func (app *Application) DiscordMessageHandler(session *discordgo.Session, messag
 		} else {
 			drink := parsedMessage[1]
 
-			if message.Author.ID == "321282244431970306" {
+			if message.Author.ID == "321282244431970306" || strings.Contains(strings.ToUpper(drink), "ISEULT") {
 				drink = "de la souillure de chaussette"
 			}
 
