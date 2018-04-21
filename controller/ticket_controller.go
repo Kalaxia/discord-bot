@@ -38,7 +38,7 @@ func UpdateTicketAction(writer http.ResponseWriter, request *http.Request) {
 func RemoveTicketAction(writer http.ResponseWriter, request *http.Request) {
 	defer utils.CatchException(writer)
 	payload := utils.ParseJsonRequest(request)
-	if !utils.CheckKeys(payload, "status", "slug", "title") {
+	if !utils.CheckKeys(payload, "status", "title") {
 		panic(exception.New(400, "Invalid data", nil))
 	}
 	server.SendDiscordMessage(
