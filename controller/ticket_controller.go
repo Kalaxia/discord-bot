@@ -48,3 +48,17 @@ func RemoveTicketAction(writer http.ResponseWriter, request *http.Request) {
 	)
 	utils.SendResponse(writer, 204, "")
 }
+
+func CommentTicketAction(writer http.ResponseWriter, request *http.Request) {
+	defer utils.CatchException(writer)
+	payload := utils.ParseJsonRequest(request)
+	if !utils.CheckKeys(payload, "author", "slug", "title") {
+		panic(exception.New(400, "Invalid data", nil))
+	}
+	server.SendDiscordMessage(
+		"board",
+		"**" + payload["author"].(string) + "** à commenté sur la carte **" + payload["title"].(string) + "**" +
+		" (htts://www.kalaxia.com/feedbacks/" + payload["slug"].(string) + ") :writing_hand:",
+	)
+	utils.SendResponse(writer, 204, "")
+}
