@@ -19,4 +19,6 @@ func InitializeRouter() {
 	server.App.Router.HandleFunc("/tickets", controller.UpdateTicketAction).Methods("PUT")
 	server.App.Router.HandleFunc("/tickets", controller.RemoveTicketAction).Methods("DELETE")
 	server.App.Router.HandleFunc("/tickets/comment", controller.CommentTicketAction).Methods("POST")
+	server.App.Router.HandleFunc("/tickets/assign", controller.AssignToTicketAction).Methods("POST")
+	server.App.Router.HandleFunc("/tickets/validate", controller.ValidateTicketAction).Methods("POST")
 }

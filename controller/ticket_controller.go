@@ -48,6 +48,34 @@ func RemoveTicketAction(writer http.ResponseWriter, request *http.Request) {
 	utils.SendResponse(writer, 204, "")
 }
 
+func AssignToTicketAction(writer http.ResponseWriter, request *http.Request) {
+	defer utils.CatchException(writer)
+	payload := utils.ParseJsonRequest(request)
+	if !utils.CheckKeys(payload, "developper", "slug", "title") {
+		panic(exception.New(400, "Invalid data", nil))
+	}
+	server.SendDiscordMessage(
+		"board",
+		"**" + payload["developper"].(string) + "** à été assigné sur la carte **" + payload["title"].(string) + "**" +
+		" (htts://www.kalaxia.com/feedbacks/" + payload["slug"].(string) + ") :construction_site:",
+	)
+	utils.SendResponse(writer, 204, "")
+}
+
+func ValidateTicketAction(writer http.ResponseWriter, request *http.Request) {
+	defer utils.CatchException(writer)
+	payload := utils.ParseJsonRequest(request)
+	if !utils.CheckKeys(payload, "tester", "slug", "title") {
+		panic(exception.New(400, "Invalid data", nil))
+	}
+	server.SendDiscordMessage(
+		"board",
+		"**" + payload["tester"].(string) + "** à validé la carte **" + payload["title"].(string) + "**" +
+		" (htts://www.kalaxia.com/feedbacks/" + payload["slug"].(string) + ") :white_check_mark:",
+	)
+	utils.SendResponse(writer, 204, "")	
+}
+
 func CommentTicketAction(writer http.ResponseWriter, request *http.Request) {
 	defer utils.CatchException(writer)
 	payload := utils.ParseJsonRequest(request)
