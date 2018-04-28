@@ -75,10 +75,6 @@ func (app *Application) DiscordMessageHandler(session *discordgo.Session, messag
 		} else {
 			drink := parsedMessage[1]
 
-			if message.Author.ID == "321282244431970306" {
-				drink = "de la souillure de chaussette"
-			}
-
 			response.WriteString("*donne ")
 			response.WriteString(drink)
 			response.WriteString(" à <@")
